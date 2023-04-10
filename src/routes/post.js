@@ -6,7 +6,7 @@ import { createPostController,
     getAllPostController, 
     getPostByIdController } from '../controllers/post.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
-import upload from '../utils/upload.js';
+import { upload } from '../utils/upload.js';
 
 const router = Router();
 

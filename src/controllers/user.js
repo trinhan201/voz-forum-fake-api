@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from 'bcryptjs';
+import { uploadFile } from "../utils/upload.js";
 
 export const updateUserController = async (req, res) => {
     try {
@@ -51,17 +52,27 @@ export const getUserByIdController = async (req, res) => {
 }
 
 export const changeAvatarControler = async (req, res, next) => {
-    const userId = req.body.userId;
-    const file = req.file;
-    const fileUrl = `https://voz-forum-fake-api.onrender.com/static/${file.filename}`;
-    if (!file) {
-        const error = new Error('Please upload a file');
-        error.httpStatusCode = 400;
-        return next(error);
-    }
+    // const userId = req.body.userId;
+    // const file = req.file;
+    // const fileUrl = `https://voz-forum-fake-api.onrender.com/static/${file.filename}`;
+    // if (!file) {
+    //     const error = new Error('Please upload a file');
+    //     error.httpStatusCode = 400;
+    //     return next(error);
+    // }
 
-    await User.findByIdAndUpdate({ _id: userId }, { avatar: fileUrl });
-    res.send('Successfully');
+    // await User.findByIdAndUpdate({ _id: userId }, { avatar: fileUrl });
+    // res.send('Successfully');
+    try {
+        const userId = req.body.userId;
+        const file = req.file;
+        const fileId = await uploadFile(file);
+        const fileUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+        await User.findByIdAndUpdate({ _id: userId }, { avatar: fileUrl });
+        res.send('Successfully');
+    } catch (error) {
+        res.status(400).json({code: 400, message:'Unexpected error'});
+    }
 };
 
 export const changePasswordController = async (req, res) => {

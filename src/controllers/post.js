@@ -1,4 +1,5 @@
 import Post from "../models/Post.js";
+import { uploadFile } from "../utils/upload.js";
 
 export const createPostController = async (req, res) => {
     try {
@@ -40,21 +41,42 @@ export const deletePostController = async (req, res) => {
 }
 
 export const uploadPostImgControler = async (req, res, next) => {
-    const postId = req.body.postId;
-    const files = req.files;
+    // const postId = req.body.postId;
+    // const files = req.files;
     
-    if (!files) {
-        const error = new Error('Please upload a file');
-        error.httpStatusCode = 400;
-        return next(error);
+    // if (!files) {
+    //     const error = new Error('Please upload a file');
+    //     error.httpStatusCode = 400;
+    //     return next(error);
+    // }
+
+    // const fileUrls =  files.map(file => {
+    //     return `https://voz-forum-fake-api.onrender.com/static/${file.filename}`;
+    // })
+
+    // await Post.findByIdAndUpdate(postId, { img: fileUrls });
+    // res.send('Successfully');
+    try {
+        
+        const postId = req.body.postId;
+        const files = req.files;
+        let fileId;
+        let fileIds = []
+        for (let f = 0; f < files.length; f += 1) {
+            fileId = await uploadFile(files[f]);
+            fileIds.push(fileId);
+        }
+
+        const fileUrls =  fileIds.map(fid => {
+            return `https://drive.google.com/uc?export=view&id=${fid}`;
+        })
+     
+        await Post.findByIdAndUpdate(postId, { img: fileUrls });
+        res.status(200).json({code: 200, message: "Successfully"});
+    } 
+    catch (f) {
+        res.send(f.message);
     }
-
-    const fileUrls =  files.map(file => {
-        return `https://voz-forum-fake-api.onrender.com/static/${file.filename}`;
-    })
-
-    await Post.findByIdAndUpdate(postId, { img: fileUrls });
-    res.send('Successfully');
 }
 
 export const getAllPostController = async (req, res) => {

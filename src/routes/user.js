@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import { updateUserController, deleteUserController, getAllUserController, getUserByIdController, changeAvatarControler, changePasswordController } from '../controllers/user.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
-import upload from '../utils/upload.js';
+import { upload } from '../utils/upload.js';
 
 const router = Router();
 
