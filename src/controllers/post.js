@@ -82,7 +82,7 @@ export const uploadPostImgControler = async (req, res, next) => {
 export const getAllPostController = async (req, res) => {
     try {
         const { limit } = req.query;
-        const fullPosts = await Post.find({});
+        const fullPosts = await Post.find({}).sort({updatedAt: -1});
         const posts = await Post.find({}).sort({createdAt: -1}).limit(limit);
         const fullPostsLength = fullPosts.length;
         res.status(200).json({code: 200, message: 'Successfully', data: posts, length: fullPostsLength, fullPosts: fullPosts});
